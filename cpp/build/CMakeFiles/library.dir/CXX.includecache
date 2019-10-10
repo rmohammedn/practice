@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/library.h
+iostream
+-
+string
+-
+
+/home/kpit/practice/cpp/src/library.cpp
+library.h
+/home/kpit/practice/cpp/src/library.h
+
+/home/kpit/practice/cpp/src/main.cpp
+library.h
+/home/kpit/practice/cpp/src/library.h
+

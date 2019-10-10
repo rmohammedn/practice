@@ -1,0 +1,3 @@
+/home/kpit/practice/gtest/build/CMakeFiles/rebuild_cache.dir
+/home/kpit/practice/gtest/build/CMakeFiles/test.dir
+/home/kpit/practice/gtest/build/CMakeFiles/edit_cache.dir
