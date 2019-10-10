@@ -1,0 +1,7 @@
+/home/kpit/practice/cpp/build/CMakeFiles/install/strip.dir
+/home/kpit/practice/cpp/build/CMakeFiles/edit_cache.dir
+/home/kpit/practice/cpp/build/CMakeFiles/library.dir
+/home/kpit/practice/cpp/build/CMakeFiles/rebuild_cache.dir
+/home/kpit/practice/cpp/build/CMakeFiles/list_install_components.dir
+/home/kpit/practice/cpp/build/CMakeFiles/install/local.dir
+/home/kpit/practice/cpp/build/CMakeFiles/install.dir
