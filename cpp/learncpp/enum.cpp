@@ -1,16 +1,14 @@
-# include <iostream>
+#include <iostream>
 
-enum color
+enum class Student
 {
-    WHITE,
-    RED,
-    BLUE = 3,
-    BLACK,
+    MOHAMMED,
+    RAFSHAN,
 };
 
 int main()
 {
-    color sky(RED);
-    std::cout << sky << std::endl;
+    Student maths{Student::MOHAMMED};
+    std::cout << maths << std::endl;
     return 0;
 }
