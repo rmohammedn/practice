@@ -21,9 +21,9 @@ class Simulator:
             self.state += 1
             reward = self.max_r
         elif action == 1 and self.state == self.length:
-            reward = 0
-        elif action == 0 and self.state == 0:
-            reward = 0
+            reward = 10
+       # elif action == 0 and self.state == 0:
+       #     reward = 0
         else:
             self.state = 0
             reward = self.min_r
@@ -37,7 +37,7 @@ class Simulator:
 class ClassicQAgent:
     """..."""
 
-    def __init__(self, state_size=5, action_size=2, discount=1.0, learning_rate=1, expo_rate=1.0, iteration=10000):
+    def __init__(self, state_size=5, action_size=2, discount=0.90, learning_rate=0.5, expo_rate=1.0, iteration=1000):
         """.............."""
 
         self.q_table = np.zeros((state_size, action_size))
