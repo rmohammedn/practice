@@ -21,7 +21,7 @@ class Simulator:
             self.state += 1
             reward = self.max_r
         elif action == 1 and self.state == self.length:
-            reward = 10
+            reward = self.max_r
        # elif action == 0 and self.state == 0:
        #     reward = 0
         else:

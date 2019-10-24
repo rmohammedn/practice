@@ -22,7 +22,7 @@ class Simulator:
             self.state += 1
             reward = self.max_r
         elif action == 1 and self.state == self.length:
-            reward = 0
+            reward = self.max_r
         else:
             self.state = 0
             reward = self.min_r
@@ -36,7 +36,7 @@ class Simulator:
 class DeepQAgent:
     """ ...... """
 
-    def __init__(self, learning_rate=0.1, discount=0.9, expo_rate=0.1, iteration=1):
+    def __init__(self, learning_rate=0.1, discount=0.9, expo_rate=1.0, hidden=4, iteration=50):
         """Initializing all the parameter required for this deep Q model the tensorflow graph is also created"""
 
         self.learning_rate = learning_rate
@@ -46,15 +46,15 @@ class DeepQAgent:
         self.input_size = 5
         self.output_size = 2
         self.sess = tf.Session()
-        self.make_model()
+        self.make_model(hidden)
         self.sess.run(self.initializer)
 
-    def make_model(self):
+    def make_model(self, hl):
         """ creating tensorflow graph """
 
         self.input_layer = tf.placeholder(shape=[None, self.input_size], dtype=tf.float32)
-        hdl1 = tf.layers.dense(self.input_layer, 16, activation=tf.sigmoid, kernel_initializer=tf.constant_initializer(np.zeros((self.input_size, 16))))
-        hdl2 = tf.layers.dense(hdl1, 16, activation=tf.sigmoid, kernel_initializer=tf.constant_initializer(np.zeros((self.input_size, 16))))
+        hdl1 = tf.layers.dense(self.input_layer, hl, activation=tf.sigmoid, kernel_initializer=tf.constant_initializer(np.zeros((self.input_size, hl))))
+        hdl2 = tf.layers.dense(hdl1, hl, activation=tf.sigmoid, kernel_initializer=tf.constant_initializer(np.zeros((hl, self.output_size))))
         self.output_layer = tf.layers.dense(hdl2, self.output_size)
 
         self.target_output = tf.placeholder(shape=[None, self.output_size], dtype=tf.float32)
@@ -110,6 +110,9 @@ class DeepQAgent:
 
         self.sess.run(self.optimizer, feed_dict={self.input_layer: training_input, self.target_output: target})
 
+        if self.expo_rate > 0:
+            self.expo_rate -= self.expo_rate/2000
+
 def main():
     """ ... """
 
@@ -120,12 +123,13 @@ def main():
     for i in range(agent.iteration):
         state = arena.state
         action = agent.getNextAction(state)
-        new_state, reward = arena.nextState(state)
-        agent.train(state, action, new_state, reward)
-
-    for i in range(5):
-        Q_value = agent.getQValue(state)
-        print(Q_value)
+        new_state, reward = arena.nextState(action)
+             
+        for i in range(5):
+            Q_value = agent.getQValue(state)
+            print(Q_value)
+        #print(state, action, new_state, reward)
+        
 
 if __name__== "__main__":
-	main()
+    main()
