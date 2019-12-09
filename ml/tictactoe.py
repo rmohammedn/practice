@@ -21,7 +21,7 @@ class TicTacToe:
         indx = action
         #print(action, self.state)
         if self.state[indx] != 0:
-            reward = -20
+            reward = -10
             return reward
         elif val == self.val1:
             self.state[indx] = val
@@ -115,14 +115,15 @@ def main():
 
     arena = TicTacToe()
     model = DeepQModel()
+    #model.loadModel("tictactoe1.h5")
     player1 = QAgent(9, model)
     player2 = QAgent(9, model)
     arena.reset()
     drow = 0
     win1 = 0
     win2 = 0
-    iteration = 100000
-    batch_size = 50
+    iteration = 500000
+    batch_size = 100
     for i in range(iteration):
         #print(i)
         val = i % 2
@@ -168,6 +169,8 @@ def main():
                 player1.remember(old_state, action, new_state, reward)
                 arena.reset()
                 drow += 1
+        if i % 500 == 0:
+            player1.seeQValues(old_state)
         if i % 1000 == 0:
             print("player1 win", win1)
             print("player2 win", win2)

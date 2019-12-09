@@ -53,9 +53,16 @@ class QAgent:
                 training_input = old_state
                 target = old_Q
             else:
-                training_input = np.vstack((old_state, training_input))
-                target = np.vstack((old_Q, target))
+                training_input = np.vstack((training_input, old_state))
+                target = np.vstack((target, old_Q))
         
         self.model.trainModel(training_input, target, batch=batch_size)
         if self.epsilon > 0:
             self.epsilon -= self.epsilon/self.iteration
+
+    def seeQValues(self, state):
+        """ print q value for the model """
+        print("the state is")
+        print(state)
+        q_value = self.model.getQValue(state)
+        print(q_value)

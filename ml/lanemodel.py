@@ -2,20 +2,22 @@ import numpy as np
 from deepqmodel import DeepQModel
 from qagent import QAgent
 
-"""
+
 class Location:
-    self.x = 0
-    self.y = 0
-    self.angel = np.pi
+    # .............#
+    def __init__(self, x=0, y=0, angle=np.pi/2):
+        self.x = x
+        self.y = y
+        self.angel = angle
 
 class Vehicle:
     # create vehicles object with its specifications
-    def __init__(self, length=4, width=2, lane=0, location=Location()):
+    def __init__(self, x, y, a=None, length=4, width=2, lane=0):
         self.length = length
         self.width  = width
         self.lane = lane
-        self.location = location
-"""
+        self.location = Location(x, y, a)
+
 
 class LaneModel:
     """ lane paramerters """
@@ -27,17 +29,25 @@ class LaneModel:
         self.change = 0.2
         self.left_end = 0
         self.no_lane = 1
-        self.car_list = [(0, 5, np.pi/2), (5, 5, np.py/2), (10, 5, np.py/2)]
-        self.state_size = 4
         self.action_size = 12
-        self.state = np.array([self.a0, self.a1, self.a2, self.d])
+        self.car_list = self.getVehicles(3)
+        #self.state = np.array([self.a0, self.a1, self.a2, self.d])
+    
+    def getVehicles(self, num):
+        """ spawn num number of vehicles """
+        return np.array([Vehicle(0, 5), Vehicle(5, 5), Vehicle(10, 5)])
+  
+    def getState(self):
+        """ create simple state """
+        self.state_size = 4
+        return np.array([self.a0, self.a1, self.a2, self.d])
 
     def getDistance(self, car, line):
         """ perpendicular distance between car and line """
         a0 = self.left_end + line * self.d
-        x = (car[0] + 2 * self.a2 * (self.a1 - car[1])) / (1 + 4 * self.a1**2)
+        x = (car.location.x + 2 * self.a2 * (self.a1 - car.location.y)) / (1 + 4 * self.a1**2)
         y = self.a2 * x * x + self.a1 * x + a0
-        dist = (car[0] - x)**2 + (car[1] - y)**2
+        dist = (car.location.x - x)**2 + (car.location.y - y)**2
         return dist
 
     def getReward(self):
@@ -49,8 +59,9 @@ class LaneModel:
             for lane in range(self.no_lane):
                 dist = self.getDistance(car, lane)
                 dist_list = np.append(dist_list, dist)
-            min_dist = np.min(dist_list)
-            distance = np.append(distance, min_dist)
+            else:
+                min_dist = np.min(dist_list)
+                distance = np.append(distance, min_dist)
         
         for dist in distance:
             if dist == 0:
@@ -111,12 +122,14 @@ class LaneModel:
             reward = self.getReward()
             return reward
         elif action == 10:
-            self.no_lane -= 1
+            if self.no_lane > 1:
+                self.no_lane -= 1
             reward = self.getReward()
             return reward
         else:
-            self.no_lane -= 1
-            self.left_end += self.d
+            if self.no_lane > 1:
+                self.no_lane -= 1
+                self.left_end += self.d
             reward = self.getReward()
             return reward
 
@@ -124,17 +137,24 @@ class LaneModel:
 def main():
     arena = LaneModel()
     action_size = arena.action_size
+    arena.getState()
     state_size = arena.state_size
     model = DeepQModel(state_size, action_size)
     agent = QAgent(action_size, model)
-    iteration = 100
-    batch_size = 10
+    iteration = 10000
+    batch_size = 50
     for i in range(iteration):
-        state = arena.state
+        state = arena.getState()
         old_state = state.reshape(1, state_size)
         action = agent.getNextAction(old_state)
-        reward = arena.getReward(action)
-        new_state = arena.state
+        reward = arena.nextState(action)
+        new_state = arena.getState().reshape(1, state_size)
         agent.remember(old_state, action, new_state, reward)
         if len(agent.memory) > batch_size:
             agent.train(batch_size)
+        if i % 100 == 0:
+            agent.seeQValues(old_state)
+    print(arena.state)
+
+if __name__=="__main__":
+    main()
